@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { anthropicClient } from "@/modules/anthropic";
 import { githubClient } from "@/modules/github";
+import { SYSTEM_PROMPT, USER_PROMPT } from "@/prompts/analyze-commits";
 
 export const dataSourceRouter = createTRPCRouter({
     hello: publicProcedure
@@ -25,6 +26,8 @@ export const dataSourceRouter = createTRPCRouter({
                 10
             );
             
-            return response;
+            // Send data to Anthropic for analysis
+            const result = await anthropicClient.analyzeGithub(SYSTEM_PROMPT, USER_PROMPT(response));
+            return result;
         })
 });

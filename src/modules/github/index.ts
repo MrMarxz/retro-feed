@@ -47,7 +47,7 @@ export class GithubClient {
                 message: commit.commit.message,
                 author: commit.commit.author.name,
                 date: commit.commit.author.date,
-                sha: commit.sha.substring(0, 7)
+                sha: commit.sha.substring(0, 7),
             }));
 
             return messages;

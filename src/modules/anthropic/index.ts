@@ -1,5 +1,6 @@
 import { env } from '@/env';
 import Anthropic from '@anthropic-ai/sdk';
+import type { ProgressReport } from './types/analyze';
 
 interface ApiResult {
     id: string;
@@ -55,35 +56,44 @@ export class AnthropicClient {
         return msg;
     }
 
-    async getResults() {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+    async analyzeGithub(
+        systemPrompt: string,
+        userPrompt: string,
+    ) {
+        const anthropic = new Anthropic({
+            apiKey: this.apiKey,
+        });
 
         try {
+            const response = await anthropic.messages.create({
+                model: "claude-3-7-sonnet-latest",
+                max_tokens: 1024,
+                system: systemPrompt,
+                messages: [
+                    { role: "user", content: userPrompt },
+                ],
+            });
 
+            const textBlock = response.content.find(block => block.type === 'text');
+            if (!textBlock || textBlock.type !== 'text') {
+                throw new Error('No text content found in response');
+            }
+
+            const analysisText = textBlock.text;
+            const cleanedText = analysisText.replace(/^```json?\s*|\s*```$/gi, '').trim();
+            const analysis = JSON.parse(cleanedText) as ProgressReport;
+
+            return analysis;
         } catch (error) {
-            clearTimeout(timeoutId);
-            throw error;
-
-            // if (error instanceof Module1Error) {
-            //     throw error;
-            // }
-
-            // if (error instanceof Error && error.name === 'AbortError') {
-            //     throw new Module1Error('Request timeout', 408);
-            // }
-
-            // throw new Module1Error(
-            //     error instanceof Error ? error.message : 'Unknown error occurred',
-            //     500
-            // );
+            console.error('Error analyzing GitHub data:', error);
+            throw new Error(`Failed to analyze GitHub data: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }
 
 // Create and export a default instance
 export const anthropicClient = new AnthropicClient({
-    apiKey: env.ANTHROPIC_API_KEY as string,
+    apiKey: env.ANTHROPIC_API_KEY,
     timeout: 15000,
 });
 
