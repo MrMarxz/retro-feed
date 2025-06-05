@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { api, HydrateClient } from "@/trpc/server";
 import TestClaudeButton from "@/components/test-ai";
+import TestGithubButton from "@/components/test-github";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -48,6 +49,7 @@ export default async function Home() {
               This is a test for Anthropic API:
             </p>
             <TestClaudeButton />
+            <TestGithubButton />
           </div>
 
         </div>

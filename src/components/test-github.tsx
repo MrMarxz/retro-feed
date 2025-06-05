@@ -4,17 +4,18 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 
-const TestClaudeButton: React.FC = () => {
-    const mutation = api.dataSource.hello.useMutation();
+const TestGithubButton: React.FC = () => {
+    const mutation = api.dataSource.githubCommits.useMutation();
 
-    const handleClick = () => {
-        mutation.mutate();
+    const handleClick = async () => {
+        const response = await mutation.mutateAsync();
+        console.log("GitHub Commits:", response);
     };
 
     return (
         <div>
             <Button onClick={handleClick} disabled={mutation.isPending}>
-                Run Anthropic Hello
+                Fetch GitHub Commits
             </Button>
             {mutation.isSuccess && (
                 <div className="mt-2 text-green-600">
@@ -30,4 +31,4 @@ const TestClaudeButton: React.FC = () => {
     );
 };
 
-export default TestClaudeButton;
+export default TestGithubButton;

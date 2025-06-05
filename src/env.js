@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     ANTHROPIC_API_KEY: z.string(),
+    GITHUB_TOKEN: z.string(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -29,6 +30,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
