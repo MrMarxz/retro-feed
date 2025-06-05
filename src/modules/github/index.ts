@@ -1,6 +1,7 @@
 import { env } from '@/env';
-import type { GitHubCommitsResponse } from './types';
+import type { GitHubCommitsResponse } from './types/commits';
 import axios from 'axios';
+import type { GitHubPullRequestsResponse } from './types/pull-requests';
 
 // Configuration interface
 interface Module1Config {
@@ -55,11 +56,46 @@ export class GithubClient {
             throw error;
         }
     }
+
+    async getPullRequests(
+        owner: string,
+        repo: string,
+        state: 'open' | 'closed' | 'all' = 'open',
+        limit = 10
+    ) {
+        const url = `https://api.github.com/repos/${owner}/${repo}/pulls?state=${state}&per_page=${limit}&sort=updated&direction=desc`;
+
+        try {
+            const response = await axios.get<GitHubPullRequestsResponse>(url, {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'GitHub-API-Client',
+                    'Authorization': `Bearer ${this.apiKey}`,
+                },
+                timeout: this.timeout,
+            });
+
+            // Return only the essential information
+            return response.data.map(pr => ({
+                number: pr.number,
+                title: pr.title,
+                description: pr.body || 'No description provided',
+                author: pr.user.login,
+                createdAt: pr.created_at,
+                url: pr.html_url
+            }));
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error fetching pull requests:', error.response?.status, error.message);
+            }
+            throw error;
+        }
+    }
 }
 
 // Create and export a default instance
 export const githubClient = new GithubClient({
-    apiKey: env.GITHUB_TOKEN as string,
+    apiKey: env.GITHUB_TOKEN,
     timeout: 15000,
 });
 
