@@ -7,6 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    JIRA_API_KEY: z.string(),
     ANTHROPIC_API_KEY: z.string(),
     GITHUB_TOKEN: z.string(),
     DATABASE_URL: z.string().url(),
@@ -29,6 +30,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    JIRA_API_KEY: process.env.JIRA_API_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     DATABASE_URL: process.env.DATABASE_URL,

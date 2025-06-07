@@ -3,6 +3,7 @@ import Link from "next/link";
 import { api, HydrateClient } from "@/trpc/server";
 import TestClaudeButton from "@/components/test-ai";
 import TestGithubButton from "@/components/test-github";
+import TestJiraButton from "@/components/test-jira";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -50,6 +51,7 @@ export default async function Home() {
             </p>
             <TestClaudeButton />
             <TestGithubButton />
+            <TestJiraButton />
           </div>
 
         </div>

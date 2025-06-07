@@ -4,6 +4,8 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { anthropicClient } from "@/modules/anthropic";
 import { githubClient } from "@/modules/github";
 import { SYSTEM_PROMPT, USER_PROMPT } from "@/prompts/analyze-commits";
+import JiraClient from "@/modules/jira";
+import { env } from "@/env";
 
 export const dataSourceRouter = createTRPCRouter({
     hello: publicProcedure
@@ -29,5 +31,16 @@ export const dataSourceRouter = createTRPCRouter({
             // Send data to Anthropic for analysis
             const result = await anthropicClient.analyzeGithub(SYSTEM_PROMPT, USER_PROMPT(response));
             return result;
-        })
+        }),
+    fetchJiraIssues: publicProcedure
+        .mutation(async () => {
+            // Fetch from Jira API
+            const jira = new JiraClient({
+                domain: "",
+                email: "",
+                apiKey: env.JIRA_API_KEY as string,
+            })
+
+            return await jira.getProjectIssues("");
+        }),
 });
