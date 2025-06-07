@@ -41,6 +41,14 @@ export const dataSourceRouter = createTRPCRouter({
                 apiKey: env.JIRA_API_KEY as string,
             })
 
-            return await jira.getProjectIssues("");
+            // return await jira.getProjectIssues("RET");
+
+            // return await jira.getProjectTimeline("RET", {
+            //     maxResults: 100,
+            //     daysBack: 30,
+            //     includeSubtasks: true,
+            // })
+
+            // return await jira.getRecentActivitySummary("RET", 7)
         }),
 });
